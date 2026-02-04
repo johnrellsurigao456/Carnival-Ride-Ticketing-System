@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carnival Ride Ticketing System - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🎡 Carnival Ride Ticketing System 🎢</h1>
+            <p class="subtitle">Welcome to the Most Exciting Carnival Experience!</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <a href="{{ url_for('dashboard') }}" class="nav-link active">Dashboard</a>
+            <a href="{{ url_for('view_bookings') }}" class="nav-link">My Bookings</a>
+        </nav>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Statistics Cards -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon">🎢</div>
+                <div class="stat-info">
+                    <h3>{{ total_rides }}</h3>
+                    <p>Total Rides</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎫</div>
+                <div class="stat-info">
+                    <h3>{{ total_tickets }}</h3>
+                    <p>Tickets Available</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <div class="stat-info">
+                    <h3>{{ total_bookings }}</h3>
+                    <p>Total Bookings</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Major Rides Section -->
+        <section class="rides-section">
+            <h2 class="section-title">🎢 Major Rides</h2>
+            <div class="rides-grid">
+                {% for ride in major_rides %}
+                <div class="ride-card">
+                    <div class="ride-header">
+                        <h3>{{ ride.name }}</h3>
+                        <span class="ride-type major">{{ ride.type }}</span>
+                    </div>
+                    <div class="ride-body">
+                        <div class="ride-info">
+                            <p><strong>💰 Price:</strong> ₱{{ ride.price }}</p>
+                            <p><strong>🎫 Available:</strong> {{ ride.available_tickets }} tickets</p>
+                            <p><strong>⏰ Schedule:</strong> {{ ride.schedule }}</p>
+                            <p><strong>👤 Age Limit:</strong> {{ ride.age_limit }}</p>
+                            <p><strong>📏 Height:</strong> {{ ride.height_limit }}</p>
+                        </div>
+                        <a href="{{ url_for('book_ticket', ride_id=ride.id) }}" class="btn btn-primary">Book Now</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Family Rides Section -->
+        <section class="rides-section">
+            <h2 class="section-title">🎠 Family Rides</h2>
+            <div class="rides-grid">
+                {% for ride in family_rides %}
+                <div class="ride-card">
+                    <div class="ride-header">
+                        <h3>{{ ride.name }}</h3>
+                        <span class="ride-type family">{{ ride.type }}</span>
+                    </div>
+                    <div class="ride-body">
+                        <div class="ride-info">
+                            <p><strong>💰 Price:</strong> ₱{{ ride.price }}</p>
+                            <p><strong>🎫 Available:</strong> {{ ride.available_tickets }} tickets</p>
+                            <p><strong>⏰ Schedule:</strong> {{ ride.schedule }}</p>
+                            <p><strong>👤 Age Limit:</strong> {{ ride.age_limit }}</p>
+                            <p><strong>📏 Height:</strong> {{ ride.height_limit }}</p>
+                        </div>
+                        <a href="{{ url_for('book_ticket', ride_id=ride.id) }}" class="btn btn-primary">Book Now</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Carnival Ride Ticketing System. All Rights Reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

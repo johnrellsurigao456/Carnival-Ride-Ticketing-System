@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - Carnival Ticketing System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🎡 My Bookings 🎢</h1>
+            <p class="subtitle">View all your ticket reservations</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+            <a href="{{ url_for('view_bookings') }}" class="nav-link active">My Bookings</a>
+        </nav>
+
+        <!-- Bookings Section -->
+        <div class="bookings-section">
+            {% if bookings %}
+                <div class="bookings-grid">
+                    {% for booking in bookings %}
+                    <div class="booking-card">
+                        <div class="booking-header">
+                            <h3>Booking #{{ booking.id }}</h3>
+                            <span class="booking-date">{{ booking.booking_time }}</span>
+                        </div>
+                        <div class="booking-body">
+                            <div class="booking-info">
+                                <p><strong>👤 Name:</strong> {{ booking.name }}</p>
+                                <p><strong>🎂 Age:</strong> {{ booking.age }}</p>
+                                <p><strong>🎢 Ride:</strong> {{ booking.ride_name }}</p>
+                                <p><strong>🎫 Tickets:</strong> {{ booking.quantity }}</p>
+                                <p><strong>💰 Total Price:</strong> ₱{{ booking.total_price }}</p>
+                            </div>
+                        </div>
+                        <div class="booking-footer">
+                            <span class="status-badge confirmed">✓ Confirmed</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">🎫</div>
+                    <h3>No Bookings Yet</h3>
+                    <p>You haven't made any bookings. Start by booking a ride!</p>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Browse Rides</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Carnival Ride Ticketing System. All Rights Reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>
