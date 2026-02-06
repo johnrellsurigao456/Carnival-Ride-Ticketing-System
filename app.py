@@ -1,92 +1,57 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from datetime import datetime
+import sqlite3
 
 app = Flask(__name__)
 app.secret_key = 'carnival_secret_key_2024'
 
-# Carnival Rides Data (temporary storage, no database yet)
-rides_data = {
-    'major_rides': [
-        {
-            'id': 1,
-            'name': 'Dragon Coaster',
-            'type': 'Major Ride',
-            'price': 150,
-            'available_tickets': 50,
-            'schedule': '10:00 AM - 8:00 PM',
-            'age_limit': '12+',
-            'height_limit': '4.5 ft minimum'
-        },
-        {
-            'id': 2,
-            'name': 'Viking Ship',
-            'type': 'Major Ride',
-            'price': 120,
-            'available_tickets': 40,
-            'schedule': '10:30 AM - 7:30 PM',
-            'age_limit': '10+',
-            'height_limit': '4 ft minimum'
-        },
-        {
-            'id': 3,
-            'name': 'Ferris Wheel',
-            'type': 'Major Ride',
-            'price': 100,
-            'available_tickets': 60,
-            'schedule': '9:00 AM - 9:00 PM',
-            'age_limit': 'All ages',
-            'height_limit': 'No limit'
-        }
-    ],
-    'family_rides': [
-        {
-            'id': 4,
-            'name': 'Carousel',
-            'type': 'Family Ride',
-            'price': 50,
-            'available_tickets': 80,
-            'schedule': '9:00 AM - 8:00 PM',
-            'age_limit': 'All ages',
-            'height_limit': 'No limit'
-        },
-        {
-            'id': 5,
-            'name': 'Tea Cups',
-            'type': 'Family Ride',
-            'price': 60,
-            'available_tickets': 70,
-            'schedule': '10:00 AM - 7:00 PM',
-            'age_limit': '5+',
-            'height_limit': '3 ft minimum'
-        },
-        {
-            'id': 6,
-            'name': 'Mini Train',
-            'type': 'Family Ride',
-            'price': 40,
-            'available_tickets': 100,
-            'schedule': '9:30 AM - 8:30 PM',
-            'age_limit': 'All ages',
-            'height_limit': 'No limit'
-        }
-    ]
-}
 
-# Bookings storage
-bookings = []
+# Database helper functions
+def get_db_connection():
+    conn = sqlite3.connect('carnival.db')
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def get_all_rides():
+    conn = get_db_connection()
+    rides = conn.execute('SELECT * FROM rides').fetchall()
+    conn.close()
+    return rides
+
+
+def get_ride_by_id(ride_id):
+    conn = get_db_connection()
+    ride = conn.execute('SELECT * FROM rides WHERE id = ?', (ride_id,)).fetchone()
+    conn.close()
+    return ride
+
+
+def get_all_bookings():
+    conn = get_db_connection()
+    bookings = conn.execute('SELECT * FROM bookings ORDER BY id DESC').fetchall()
+    conn.close()
+    return bookings
 
 
 @app.route('/')
 def dashboard():
+    rides = get_all_rides()
+
+    # Separate major and family rides
+    major_rides = [dict(ride) for ride in rides if ride['type'] == 'Major Ride']
+    family_rides = [dict(ride) for ride in rides if ride['type'] == 'Family Ride']
+
     # Calculate statistics
-    total_rides = len(rides_data['major_rides']) + len(rides_data['family_rides'])
-    total_tickets_available = sum(
-        ride['available_tickets'] for ride in rides_data['major_rides'] + rides_data['family_rides'])
+    total_rides = len(rides)
+    total_tickets_available = sum(ride['available_tickets'] for ride in rides)
+
+    bookings = get_all_bookings()
     total_bookings = len(bookings)
 
     return render_template('dashboard.html',
-                           major_rides=rides_data['major_rides'],
-                           family_rides=rides_data['family_rides'],
+                           major_rides=major_rides,
+                           family_rides=family_rides,
                            total_rides=total_rides,
                            total_tickets=total_tickets_available,
                            total_bookings=total_bookings)
@@ -94,12 +59,7 @@ def dashboard():
 
 @app.route('/book/<int:ride_id>', methods=['GET', 'POST'])
 def book_ticket(ride_id):
-    # Find the ride
-    ride = None
-    for r in rides_data['major_rides'] + rides_data['family_rides']:
-        if r['id'] == ride_id:
-            ride = r
-            break
+    ride = get_ride_by_id(ride_id)
 
     if not ride:
         flash('Ride not found!', 'error')
@@ -114,29 +74,35 @@ def book_ticket(ride_id):
             flash('Not enough tickets available!', 'error')
             return redirect(url_for('book_ticket', ride_id=ride_id))
 
-        # Create booking
-        booking = {
-            'id': len(bookings) + 1,
-            'name': name,
-            'age': age,
-            'ride_name': ride['name'],
-            'quantity': quantity,
-            'total_price': ride['price'] * quantity,
-            'booking_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        }
+        # Calculate total price
+        total_price = ride['price'] * quantity
+        booking_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-        bookings.append(booking)
-        ride['available_tickets'] -= quantity
+        # Insert booking into database
+        conn = get_db_connection()
+        conn.execute('''
+            INSERT INTO bookings (name, age, ride_id, ride_name, quantity, total_price, booking_time)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (name, age, ride_id, ride['name'], quantity, total_price, booking_time))
+
+        # Update available tickets
+        new_available = ride['available_tickets'] - quantity
+        conn.execute('UPDATE rides SET available_tickets = ? WHERE id = ?', (new_available, ride_id))
+
+        conn.commit()
+        conn.close()
 
         flash(f'Successfully booked {quantity} ticket(s) for {ride["name"]}!', 'success')
         return redirect(url_for('dashboard'))
 
-    return render_template('book.html', ride=ride)
+    return render_template('book.html', ride=dict(ride))
 
 
 @app.route('/bookings')
 def view_bookings():
-    return render_template('bookings.html', bookings=bookings)
+    bookings = get_all_bookings()
+    bookings_list = [dict(booking) for booking in bookings]
+    return render_template('bookings.html', bookings=bookings_list)
 
 
 if __name__ == '__main__':
