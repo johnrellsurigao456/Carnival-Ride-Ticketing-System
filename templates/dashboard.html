@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carnival Ride Ticketing System - Dashboard</title>
+    <title>Dashboard - Carnival Ticketing System</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
@@ -11,13 +11,17 @@
         <!-- Header -->
         <header class="header">
             <h1>🎡 Carnival Ride Ticketing System 🎢</h1>
-            <p class="subtitle">Welcome to the Most Exciting Carnival Experience!</p>
+            <p class="subtitle">Welcome, {{ session.full_name }}! Ready for an adventure?</p>
         </header>
 
         <!-- Navigation -->
         <nav class="nav">
+            <a href="{{ url_for('home') }}" class="nav-link">Home</a>
             <a href="{{ url_for('dashboard') }}" class="nav-link active">Dashboard</a>
             <a href="{{ url_for('view_bookings') }}" class="nav-link">My Bookings</a>
+            <a href="{{ url_for('about') }}" class="nav-link">About Us</a>
+            <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
+            <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
         </nav>
 
         <!-- Flash Messages -->
@@ -51,7 +55,7 @@
                 <div class="stat-icon">📋</div>
                 <div class="stat-info">
                     <h3>{{ total_bookings }}</h3>
-                    <p>Total Bookings</p>
+                    <p>My Bookings</p>
                 </div>
             </div>
         </div>
@@ -74,7 +78,11 @@
                             <p><strong>👤 Age Limit:</strong> {{ ride.age_limit }}</p>
                             <p><strong>📏 Height:</strong> {{ ride.height_limit }}</p>
                         </div>
-                        <a href="{{ url_for('book_ticket', ride_id=ride.id) }}" class="btn btn-primary">Book Now</a>
+                        {% if ride.available_tickets > 0 %}
+                            <a href="{{ url_for('book_ticket', ride_id=ride.id) }}" class="btn btn-primary">Book Now</a>
+                        {% else %}
+                            <button class="btn btn-disabled" disabled>Sold Out</button>
+                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}
@@ -99,7 +107,11 @@
                             <p><strong>👤 Age Limit:</strong> {{ ride.age_limit }}</p>
                             <p><strong>📏 Height:</strong> {{ ride.height_limit }}</p>
                         </div>
-                        <a href="{{ url_for('book_ticket', ride_id=ride.id) }}" class="btn btn-primary">Book Now</a>
+                        {% if ride.available_tickets > 0 %}
+                            <a href="{{ url_for('book_ticket', ride_id=ride.id) }}" class="btn btn-primary">Book Now</a>
+                        {% else %}
+                            <button class="btn btn-disabled" disabled>Sold Out</button>
+                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}
