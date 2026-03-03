@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket #{{ booking.id }} - Carnival Ticketing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .ticket-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .ticket {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 5px solid white;
+        }
+
+        .ticket-header-section {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 40px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .ticket-header-section h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            font-weight: bold;
+        }
+
+        .ticket-number {
+            font-size: 1.8em;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.3);
+            display: inline-block;
+            padding: 15px 40px;
+            border-radius: 30px;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .ticket-body-section {
+            background: white;
+            padding: 40px;
+        }
+
+        .team-photo-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+        }
+
+        .team-photo {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 5px solid white;
+        }
+
+        .ticket-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .ticket-info-item {
+            padding: 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .ticket-info-label {
+            font-size: 0.95em;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+
+        .ticket-info-value {
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+
+        .qr-section {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            margin: 30px 0;
+        }
+
+        .qr-section h3 {
+            color: white;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .qr-code-img {
+            max-width: 280px;
+            height: auto;
+            border: 8px solid white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background: white;
+            padding: 15px;
+        }
+
+        .qr-instruction {
+            color: white;
+            font-size: 1.1em;
+            margin-top: 20px;
+            opacity: 0.95;
+        }
+
+        .manual-code-box {
+            margin-top: 25px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            border: 3px dashed #f5576c;
+        }
+
+        .manual-code-label {
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .manual-code-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #f5576c;
+            letter-spacing: 3px;
+            font-family: monospace;
+            word-break: break-all;
+        }
+
+        .manual-code-instruction {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .ticket-status {
+            text-align: center;
+            padding: 25px;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .ticket-status.unused {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .ticket-status.used {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .ticket-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+
+        .print-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .print-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+        }
+
+        .carnival-decoration {
+            text-align: center;
+            font-size: 2.5em;
+            margin: 20px 0;
+        }
+
+        @media print {
+            .nav, .ticket-actions, .footer {
+                display: none;
+            }
+
+            .ticket-container {
+                margin: 0;
+                padding: 0;
+            }
+
+            .ticket {
+                border: none;
+                box-shadow: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .ticket-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ticket-header-section h1 {
+                font-size: 2em;
+            }
+
+            .manual-code-value {
+                font-size: 1.2em;
+                letter-spacing: 1px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🎫 Ticket Generated Successfully!</h1>
+            <p class="subtitle">Give this ticket to the customer</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <a href="{{ url_for('cashier_dashboard') if session.role == 'cashier' else url_for('admin_dashboard') }}" class="nav-link">Dashboard</a>
+            <a href="{{ url_for('cashier_bookings') if session.role == 'cashier' else url_for('admin_bookings') }}" class="nav-link">Bookings</a>
+            <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+        </nav>
+
+        <!-- Ticket -->
+        <div class="ticket-container">
+            <div class="ticket">
+                <div class="ticket-header-section">
+                    <h1>🎡 CARNIVAL RIDE TICKETING SYSTEM 🎢</h1>
+                    <div class="ticket-number">TICKET #{{ "%04d"|format(booking.id) }}</div>
+                </div>
+
+                <div class="ticket-body-section">
+                    <!-- Team Photo -->
+                    <div class="team-photo-section">
+                        <img src="{{ url_for('static', filename='images/team-photo.jpg') }}" alt="Carnival Team" class="team-photo">
+                    </div>
+
+                    <div class="carnival-decoration">🎠 🎪 🎡 🎢 🎠</div>
+
+                    <div class="ticket-info-grid">
+                        <div class="ticket-info-item">
+                            <div class="ticket-info-label">👤 CUSTOMER NAME</div>
+                            <div class="ticket-info-value">{{ booking.customer_name }}</div>
+                        </div>
+
+                        <div class="ticket-info-item">
+                            <div class="ticket-info-label">🎂 AGE</div>
+                            <div class="ticket-info-value">{{ booking.customer_age }} years old</div>
+                        </div>
+
+                        <div class="ticket-info-item">
+                            <div class="ticket-info-label">🎢 RIDE NAME</div>
+                            <div class="ticket-info-value">{{ booking.ride_name }}</div>
+                        </div>
+
+                        <div class="ticket-info-item">
+                            <div class="ticket-info-label">🎫 QUANTITY</div>
+                            <div class="ticket-info-value">{{ booking.quantity }} ticket(s)</div>
+                        </div>
+
+                        <div class="ticket-info-item">
+                            <div class="ticket-info-label">💰 TOTAL PRICE</div>
+                            <div class="ticket-info-value">₱{{ "%.2f"|format(booking.total_price) }}</div>
+                        </div>
+
+                        <div class="ticket-info-item">
+                            <div class="ticket-info-label">📅 BOOKING DATE</div>
+                            <div class="ticket-info-value">{{ booking.booking_time[:10] }}</div>
+                        </div>
+                    </div>
+
+                    <div class="qr-section">
+                        <h3>📱 SCAN QR CODE</h3>
+                        <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code" class="qr-code-img">
+                        <p class="qr-instruction">Present this QR code at the ride entrance</p>
+
+                        <div class="manual-code-box">
+                            <p class="manual-code-label">📝 Manual Code (if scanner not available):</p>
+                            <p class="manual-code-value">{{ booking.qr_code }}</p>
+                            <p class="manual-code-instruction">Type this code manually at the scan page</p>
+                        </div>
+                    </div>
+
+                    <div class="carnival-decoration">🎪 🎡 🎢 🎠 🎪</div>
+
+                    <div class="ticket-status {% if booking.status == 'unused' %}unused{% else %}used{% endif %}">
+                        {% if booking.status == 'unused' %}
+                            ✓ VALID TICKET - UNUSED
+                        {% else %}
+                            ✗ TICKET ALREADY USED
+                        {% endif %}
+                    </div>
+
+                    <div style="text-align: center; color: #7f8c8d; margin-top: 20px;">
+                        <p><strong>Cashier:</strong> {{ booking.cashier_name }}</p>
+                        <p style="margin-top: 10px;">Thank you for choosing Carnival Paradise!</p>
+                        <p>Have a fun and safe ride! 🎉</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ticket-actions">
+                <button onclick="window.print()" class="print-btn">🖨️ Print Ticket</button>
+                <a href="{{ url_for('cashier_dashboard') if session.role == 'cashier' else url_for('admin_dashboard') }}" class="btn btn-primary" style="padding: 18px 50px; font-size: 1.2em;">Back to Dashboard</a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2026 Carnival Ride Ticketing System. All Rights Reserved.</p>
+            <p>Developed by Johnrell Surigao</p>
+        </footer>
+    </div>
+</body>
+</html>

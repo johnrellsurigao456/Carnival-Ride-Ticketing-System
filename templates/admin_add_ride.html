@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Ride - Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>➕ Add New Ride</h1>
+            <p class="subtitle">Create a new carnival ride</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-link">Dashboard</a>
+            <a href="{{ url_for('admin_bookings') }}" class="nav-link">All Bookings</a>
+            <a href="{{ url_for('admin_add_ride') }}" class="nav-link active">Add Ride</a>
+            <a href="{{ url_for('scan_ticket') }}" class="nav-link">Scan Ticket</a>
+            <a href="{{ url_for('about') }}" class="nav-link">About</a>
+            <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
+            <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+        </nav>
+
+        <!-- Add Ride Form -->
+        <div class="form-container">
+            <div class="form-box">
+                <h2>Ride Information</h2>
+                <form method="POST" action="{{ url_for('admin_add_ride') }}">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Ride Name:</label>
+                            <input type="text" id="name" name="name" required placeholder="e.g. Dragon Coaster">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="type">Ride Type:</label>
+                            <select id="type" name="type" required>
+                                <option value="">Select Type</option>
+                                <option value="Major Ride">Major Ride</option>
+                                <option value="Family Ride">Family Ride</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="price">Price (₱):</label>
+                            <input type="number" id="price" name="price" step="0.01" required placeholder="150.00">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="total_tickets">Total Tickets:</label>
+                            <input type="number" id="total_tickets" name="total_tickets" required placeholder="50">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="schedule">Schedule:</label>
+                        <input type="text" id="schedule" name="schedule" required placeholder="e.g. 10:00 AM - 8:00 PM">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="age_limit">Age Limit:</label>
+                            <input type="text" id="age_limit" name="age_limit" required placeholder="e.g. 12+ or All ages">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="height_limit">Height Limit:</label>
+                            <input type="text" id="height_limit" name="height_limit" required placeholder="e.g. 4.5 ft minimum or No limit">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Add Ride</button>
+                        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Carnival Ride Ticketing System. All Rights Reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

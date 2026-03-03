@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Ticket - Carnival Ticketing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>📱 Scan Ticket QR Code</h1>
+            <p class="subtitle">Validate customer tickets at ride entrance</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <a href="{{ url_for('admin_dashboard') if session.role == 'admin' else url_for('cashier_dashboard') }}" class="nav-link">Dashboard</a>
+            <a href="{{ url_for('admin_bookings') if session.role == 'admin' else url_for('cashier_bookings') }}" class="nav-link">Bookings</a>
+            <a href="{{ url_for('scan_ticket') }}" class="nav-link active">Scan Ticket</a>
+            <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+        </nav>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Scan Form -->
+        <div class="scan-container">
+            <div class="scan-box">
+                <div class="scan-icon">📱</div>
+                <h2>Enter QR Code</h2>
+                <p class="scan-instruction">Scan the QR code from the customer's ticket or manually enter the code</p>
+
+                <form method="POST" action="{{ url_for('scan_ticket') }}">
+                    <div class="form-group">
+                        <label for="qr_code">QR Code:</label>
+                        <input type="text" id="qr_code" name="qr_code" required
+                               placeholder="Scan or enter QR code here"
+                               autofocus
+                               style="font-size: 1.2em; padding: 15px; text-align: center;">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-large">✓ Validate Ticket</button>
+                </form>
+
+                <div class="scan-info">
+                    <h4>How to use:</h4>
+                    <ol>
+                        <li>Ask customer to show their ticket</li>
+                        <li>Scan the QR code using your scanner</li>
+                        <li>Or manually type the code from the ticket</li>
+                        <li>Click "Validate Ticket"</li>
+                        <li>System will check if ticket is valid or already used</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Carnival Ride Ticketing System. All Rights Reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

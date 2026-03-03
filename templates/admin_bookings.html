@@ -3,23 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Bookings - Carnival Ticketing System</title>
+    <title>All Bookings - Admin</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="container">
         <!-- Header -->
         <header class="header">
-            <h1>🎡 My Bookings 🎢</h1>
-            <p class="subtitle">View all your ticket reservations</p>
+            <h1>📋 All Bookings</h1>
+            <p class="subtitle">Monitor all ticket bookings</p>
         </header>
 
         <!-- Navigation -->
         <nav class="nav">
-            <a href="{{ url_for('home') }}" class="nav-link">Home</a>
-            <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
-            <a href="{{ url_for('view_bookings') }}" class="nav-link active">My Bookings</a>
-            <a href="{{ url_for('about') }}" class="nav-link">About Us</a>
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-link">Dashboard</a>
+            <a href="{{ url_for('admin_bookings') }}" class="nav-link active">All Bookings</a>
+            <a href="{{ url_for('admin_add_ride') }}" class="nav-link">Add Ride</a>
+            <a href="{{ url_for('scan_ticket') }}" class="nav-link">Scan Ticket</a>
+            <a href="{{ url_for('about') }}" class="nav-link">About</a>
             <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
             <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
         </nav>
@@ -29,22 +30,27 @@
             {% if bookings %}
                 <div class="bookings-grid">
                     {% for booking in bookings %}
-                    <div class="booking-card">
+                    <div class="booking-card {% if booking.status == 'used' %}booking-used{% endif %}">
                         <div class="booking-header">
                             <h3>Booking #{{ booking.id }}</h3>
                             <span class="booking-date">{{ booking.booking_time }}</span>
                         </div>
                         <div class="booking-body">
                             <div class="booking-info">
-                                <p><strong>👤 Name:</strong> {{ booking.name }}</p>
-                                <p><strong>🎂 Age:</strong> {{ booking.age }}</p>
+                                <p><strong>👤 Customer:</strong> {{ booking.customer_name }}</p>
+                                <p><strong>🎂 Age:</strong> {{ booking.customer_age }}</p>
                                 <p><strong>🎢 Ride:</strong> {{ booking.ride_name }}</p>
                                 <p><strong>🎫 Tickets:</strong> {{ booking.quantity }}</p>
-                                <p><strong>💰 Total Price:</strong> ₱{{ booking.total_price }}</p>
+                                <p><strong>💰 Total:</strong> ₱{{ booking.total_price }}</p>
+                                <p><strong>💼 Cashier:</strong> {{ booking.cashier_name }}</p>
                             </div>
                         </div>
                         <div class="booking-footer">
-                            <span class="status-badge confirmed">✓ Confirmed</span>
+                            {% if booking.status == 'unused' %}
+                                <span class="status-badge unused">⏳ Unused</span>
+                            {% else %}
+                                <span class="status-badge used">✓ Used ({{ booking.used_time }})</span>
+                            {% endif %}
                         </div>
                     </div>
                     {% endfor %}
@@ -53,8 +59,7 @@
                 <div class="empty-state">
                     <div class="empty-icon">🎫</div>
                     <h3>No Bookings Yet</h3>
-                    <p>You haven't made any bookings. Start by booking a ride!</p>
-                    <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Browse Rides</a>
+                    <p>No tickets have been booked yet.</p>
                 </div>
             {% endif %}
         </div>

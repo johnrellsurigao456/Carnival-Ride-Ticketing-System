@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Carnival Ride Ticketing System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🎡 Carnival Ride Ticketing System 🎢</h1>
+            <p class="subtitle">Experience the Thrill of a Lifetime!</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <a href="{{ url_for('home') }}" class="nav-link active">Home</a>
+            <a href="{{ url_for('about') }}" class="nav-link">About Us</a>
+            <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
+            <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+        </nav>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h2>Welcome to Carnival Paradise!</h2>
+                <p>Professional ticketing system for the ultimate carnival experience. Book tickets, scan QR codes, and manage rides efficiently!</p>
+                <div class="hero-buttons">
+                    <a href="{{ url_for('login') }}" class="btn btn-primary btn-large">Staff Login</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <h2 class="section-title">System Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">👨‍💼</div>
+                    <h3>Admin Dashboard</h3>
+                    <p>Monitor all rides, view statistics, manage bookings, and track revenue in real-time!</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Cashier System</h3>
+                    <p>Quick and easy booking for customers with instant ticket generation!</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>QR Code Tickets</h3>
+                    <p>Secure tickets with unique QR codes that expire after use!</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Analytics & Reports</h3>
+                    <p>Track monthly and yearly sales, best-selling rides, and performance metrics!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Carnival Ride Ticketing System. All Rights Reserved.</p>
+            <p>Developed by Johnrell Surigao</p>
+        </footer>
+    </div>
+</body>
+</html>

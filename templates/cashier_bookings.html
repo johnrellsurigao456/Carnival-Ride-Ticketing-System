@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Bookings - Carnival Ticketing System</title>
+    <title>My Bookings - Cashier</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="container">
         <!-- Header -->
         <header class="header">
-            <h1>🎡 My Bookings 🎢</h1>
-            <p class="subtitle">View all your ticket reservations</p>
+            <h1>📋 My Bookings</h1>
+            <p class="subtitle">View all bookings you've created</p>
         </header>
 
         <!-- Navigation -->
         <nav class="nav">
-            <a href="{{ url_for('home') }}" class="nav-link">Home</a>
-            <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
-            <a href="{{ url_for('view_bookings') }}" class="nav-link active">My Bookings</a>
-            <a href="{{ url_for('about') }}" class="nav-link">About Us</a>
+            <a href="{{ url_for('cashier_dashboard') }}" class="nav-link">Book Tickets</a>
+            <a href="{{ url_for('cashier_bookings') }}" class="nav-link active">My Bookings</a>
+            <a href="{{ url_for('scan_ticket') }}" class="nav-link">Scan Ticket</a>
+            <a href="{{ url_for('about') }}" class="nav-link">About</a>
             <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
             <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
         </nav>
@@ -29,22 +29,27 @@
             {% if bookings %}
                 <div class="bookings-grid">
                     {% for booking in bookings %}
-                    <div class="booking-card">
+                    <div class="booking-card {% if booking.status == 'used' %}booking-used{% endif %}">
                         <div class="booking-header">
                             <h3>Booking #{{ booking.id }}</h3>
                             <span class="booking-date">{{ booking.booking_time }}</span>
                         </div>
                         <div class="booking-body">
                             <div class="booking-info">
-                                <p><strong>👤 Name:</strong> {{ booking.name }}</p>
-                                <p><strong>🎂 Age:</strong> {{ booking.age }}</p>
+                                <p><strong>👤 Customer:</strong> {{ booking.customer_name }}</p>
+                                <p><strong>🎂 Age:</strong> {{ booking.customer_age }}</p>
                                 <p><strong>🎢 Ride:</strong> {{ booking.ride_name }}</p>
                                 <p><strong>🎫 Tickets:</strong> {{ booking.quantity }}</p>
                                 <p><strong>💰 Total Price:</strong> ₱{{ booking.total_price }}</p>
                             </div>
                         </div>
                         <div class="booking-footer">
-                            <span class="status-badge confirmed">✓ Confirmed</span>
+                            {% if booking.status == 'unused' %}
+                                <span class="status-badge unused">⏳ Unused</span>
+                                <a href="{{ url_for('view_ticket', booking_id=booking.id) }}" class="btn-small btn-view">View Ticket</a>
+                            {% else %}
+                                <span class="status-badge used">✓ Used ({{ booking.used_time }})</span>
+                            {% endif %}
                         </div>
                     </div>
                     {% endfor %}
@@ -53,8 +58,8 @@
                 <div class="empty-state">
                     <div class="empty-icon">🎫</div>
                     <h3>No Bookings Yet</h3>
-                    <p>You haven't made any bookings. Start by booking a ride!</p>
-                    <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Browse Rides</a>
+                    <p>You haven't created any bookings yet. Start booking tickets for customers!</p>
+                    <a href="{{ url_for('cashier_dashboard') }}" class="btn btn-primary">Book Tickets</a>
                 </div>
             {% endif %}
         </div>

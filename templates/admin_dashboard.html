@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Carnival Ticketing System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>👨‍💼 Admin Dashboard 🎡</h1>
+            <p class="subtitle">Welcome, {{ session.full_name }}! Monitor your carnival operations</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-link active">Dashboard</a>
+            <a href="{{ url_for('admin_bookings') }}" class="nav-link">All Bookings</a>
+            <a href="{{ url_for('admin_add_ride') }}" class="nav-link">Add Ride</a>
+            <a href="{{ url_for('scan_ticket') }}" class="nav-link">Scan Ticket</a>
+            <a href="{{ url_for('about') }}" class="nav-link">About</a>
+            <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
+            <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+        </nav>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Statistics Cards -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon">🎢</div>
+                <div class="stat-info">
+                    <h3>{{ total_rides }}</h3>
+                    <p>Total Rides</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <div class="stat-info">
+                    <h3>{{ total_bookings }}</h3>
+                    <p>Total Bookings</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎫</div>
+                <div class="stat-info">
+                    <h3>{{ unused_tickets }}</h3>
+                    <p>Unused Tickets</p>
+                </div>
+            </div>
+            <div class="stat-card stat-card-used">
+                <div class="stat-icon">✓</div>
+                <div class="stat-info">
+                    <h3>{{ used_tickets }}</h3>
+                    <p>Used Tickets</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue Statistics -->
+        <section class="revenue-section">
+            <h2 class="section-title">💰 Revenue Analytics</h2>
+            <div class="revenue-grid">
+                <div class="revenue-card">
+                    <h3>Total Revenue</h3>
+                    <p class="revenue-amount">₱{{ "%.2f"|format(total_revenue) }}</p>
+                    <span class="revenue-label">All Time</span>
+                </div>
+                <div class="revenue-card">
+                    <h3>Monthly Revenue</h3>
+                    <p class="revenue-amount">₱{{ "%.2f"|format(monthly_revenue) }}</p>
+                    <span class="revenue-label">{{ monthly_bookings }} bookings this month</span>
+                </div>
+                <div class="revenue-card">
+                    <h3>Yearly Revenue</h3>
+                    <p class="revenue-amount">₱{{ "%.2f"|format(yearly_revenue) }}</p>
+                    <span class="revenue-label">{{ yearly_bookings }} bookings this year</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Best Selling Rides -->
+        <section class="best-rides-section">
+            <h2 class="section-title">🏆 Best Selling Rides</h2>
+            <div class="best-rides-list">
+                {% for ride_name, count in best_rides %}
+                <div class="best-ride-item">
+                    <span class="ride-rank">{{ loop.index }}</span>
+                    <span class="ride-name">{{ ride_name }}</span>
+                    <span class="ride-count">{{ count }} tickets sold</span>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Rides Management -->
+        <section class="rides-section">
+            <h2 class="section-title">🎢 Manage Rides</h2>
+            <div class="rides-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ride Name</th>
+                            <th>Type</th>
+                            <th>Price</th>
+                            <th>Available</th>
+                            <th>Total</th>
+                            <th>Schedule</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ride in rides %}
+                        <tr>
+                            <td>{{ ride.id }}</td>
+                            <td><strong>{{ ride.name }}</strong></td>
+                            <td><span class="ride-type {% if ride.type == 'Major Ride' %}major{% else %}family{% endif %}">{{ ride.type }}</span></td>
+                            <td>₱{{ ride.price }}</td>
+                            <td class="{% if ride.available_tickets == 0 %}text-danger{% endif %}">{{ ride.available_tickets }}</td>
+                            <td>{{ ride.total_tickets }}</td>
+                            <td>{{ ride.schedule }}</td>
+                            <td class="actions-cell">
+                                <a href="{{ url_for('admin_edit_ride', ride_id=ride.id) }}" class="btn-small btn-edit">Edit</a>
+                                <a href="{{ url_for('admin_delete_ride', ride_id=ride.id) }}" class="btn-small btn-delete" onclick="return confirm('Are you sure you want to delete this ride?')">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Carnival Ride Ticketing System. All Rights Reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

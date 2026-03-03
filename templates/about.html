@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Carnival Ticketing System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🎡 About Our Carnival 🎢</h1>
+            <p class="subtitle">Learn more about our amazing carnival experience!</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+            {% if session.user_id %}
+                {% if session.role == 'admin' %}
+                    <a href="{{ url_for('admin_dashboard') }}" class="nav-link">Dashboard</a>
+                    <a href="{{ url_for('admin_bookings') }}" class="nav-link">All Bookings</a>
+                {% elif session.role == 'cashier' %}
+                    <a href="{{ url_for('cashier_dashboard') }}" class="nav-link">Dashboard</a>
+                    <a href="{{ url_for('cashier_bookings') }}" class="nav-link">My Bookings</a>
+                {% endif %}
+            {% endif %}
+            <a href="{{ url_for('about') }}" class="nav-link active">About Us</a>
+            <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
+            {% if session.user_id %}
+                <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+            {% endif %}
+        </nav>
+
+        <!-- About Content -->
+        <section class="about-section">
+            <div class="about-content">
+                <h2>Welcome to Carnival Paradise!</h2>
+                <p>Since 2024, we've been bringing joy, excitement, and unforgettable memories to families and thrill-seekers alike. Our carnival is home to the most thrilling rides, delicious food, and entertaining shows in the region.</p>
+
+                <h3>Our Mission</h3>
+                <p>To provide a safe, fun, and memorable experience for all our guests. We believe that everyone deserves a chance to experience the magic of the carnival, which is why we've created an easy-to-use online ticketing system that makes booking your adventure simple and convenient.</p>
+
+                <h3>What We Offer</h3>
+                <div class="offer-grid">
+                    <div class="offer-item">
+                        <h4>🎢 Major Rides</h4>
+                        <p>Experience heart-pounding thrills on our world-class roller coasters and major attractions. Perfect for adrenaline junkies!</p>
+                    </div>
+                    <div class="offer-item">
+                        <h4>🎠 Family Rides</h4>
+                        <p>Enjoy gentle, fun rides suitable for all ages. Create beautiful memories with your loved ones!</p>
+                    </div>
+                    <div class="offer-item">
+                        <h4>🎪 Entertainment</h4>
+                        <p>Live shows, games, and attractions throughout the carnival grounds. There's always something happening!</p>
+                    </div>
+                    <div class="offer-item">
+                        <h4>🍕 Food & Drinks</h4>
+                        <p>Delicious carnival treats, refreshing drinks, and satisfying meals to keep you energized all day!</p>
+                    </div>
+                </div>
+
+                <h3>Safety First</h3>
+                <p>Your safety is our top priority. All our rides are regularly inspected and maintained to the highest standards. Our trained staff ensures that safety protocols are followed at all times. We have age and height requirements for certain rides to ensure everyone's safety and enjoyment.</p>
+
+                <h3>Why Choose Our Ticketing System?</h3>
+                <ul class="benefits-list">
+                    <li>✅ Professional cashier-based booking system</li>
+                    <li>✅ Secure QR code tickets that expire after use</li>
+                    <li>✅ Real-time ticket availability tracking</li>
+                    <li>✅ Admin dashboard for complete monitoring</li>
+                    <li>✅ Sales analytics and reporting</li>
+                    <li>✅ Instant ticket generation and printing</li>
+                </ul>
+
+                <div class="cta-box">
+                    <h3>Visit Our Carnival Today!</h3>
+                    <p>Come experience the fun and excitement of Carnival Paradise!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Carnival Ride Ticketing System. All Rights Reserved.</p>
+            <p>Developed by Johnrell Surigao</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Ticket - {{ ride.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🎫 Book Ticket for Customer</h1>
+            <p class="subtitle">Create a booking for {{ ride.name }}</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <a href="{{ url_for('cashier_dashboard') }}" class="nav-link">Book Tickets</a>
+            <a href="{{ url_for('cashier_bookings') }}" class="nav-link">My Bookings</a>
+            <a href="{{ url_for('scan_ticket') }}" class="nav-link">Scan Ticket</a>
+            <a href="{{ url_for('about') }}" class="nav-link">About</a>
+            <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
+            <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+        </nav>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Booking Form -->
+        <div class="booking-container">
+            <div class="ride-details">
+                <h2>{{ ride.name }}</h2>
+                <span class="ride-type {% if ride.type == 'Major Ride' %}major{% else %}family{% endif %}">
+                    {{ ride.type }}
+                </span>
+
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">💰 Price per Ticket:</span>
+                        <span class="detail-value">₱{{ ride.price }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">🎫 Available Tickets:</span>
+                        <span class="detail-value">{{ ride.available_tickets }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">⏰ Schedule:</span>
+                        <span class="detail-value">{{ ride.schedule }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">👤 Age Limit:</span>
+                        <span class="detail-value">{{ ride.age_limit }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">📏 Height Requirement:</span>
+                        <span class="detail-value">{{ ride.height_limit }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="booking-form">
+                <h3>Customer Information</h3>
+                <form method="POST" action="{{ url_for('cashier_book', ride_id=ride.id) }}">
+                    <div class="form-group">
+                        <label for="customer_name">Customer Name:</label>
+                        <input type="text" id="customer_name" name="customer_name" required placeholder="Enter customer's full name" autofocus>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customer_age">Customer Age:</label>
+                        <input type="number" id="customer_age" name="customer_age" required placeholder="Enter customer's age" min="1" max="120">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantity">Number of Tickets:</label>
+                        <input type="number" id="quantity" name="quantity" required placeholder="How many tickets?" min="1" max="{{ ride.available_tickets }}" value="1">
+                    </div>
+
+                    <div class="total-price">
+                        <span>Total Price:</span>
+                        <span id="total">₱{{ ride.price }}</span>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Confirm Booking & Generate Ticket</button>
+                        <a href="{{ url_for('cashier_dashboard') }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Carnival Ride Ticketing System. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Calculate total price dynamically
+        const pricePerTicket = {{ ride.price }};
+        const quantityInput = document.getElementById('quantity');
+        const totalDisplay = document.getElementById('total');
+
+        quantityInput.addEventListener('input', function() {
+            const quantity = parseInt(this.value) || 1;
+            const total = pricePerTicket * quantity;
+            totalDisplay.textContent = '₱' + total.toFixed(2);
+        });
+    </script>
+</body>
+</html>

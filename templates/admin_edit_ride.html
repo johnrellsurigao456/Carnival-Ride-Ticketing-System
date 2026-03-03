@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Ride - Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>✏️ Edit Ride</h1>
+            <p class="subtitle">Update ride information</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-link">Dashboard</a>
+            <a href="{{ url_for('admin_bookings') }}" class="nav-link">All Bookings</a>
+            <a href="{{ url_for('admin_add_ride') }}" class="nav-link">Add Ride</a>
+            <a href="{{ url_for('scan_ticket') }}" class="nav-link">Scan Ticket</a>
+            <a href="{{ url_for('about') }}" class="nav-link">About</a>
+            <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
+            <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+        </nav>
+
+        <!-- Edit Ride Form -->
+        <div class="form-container">
+            <div class="form-box">
+                <h2>Edit: {{ ride.name }}</h2>
+                <form method="POST" action="{{ url_for('admin_edit_ride', ride_id=ride.id) }}">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Ride Name:</label>
+                            <input type="text" id="name" name="name" value="{{ ride.name }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="type">Ride Type:</label>
+                            <select id="type" name="type" required>
+                                <option value="Major Ride" {% if ride.type == 'Major Ride' %}selected{% endif %}>Major Ride</option>
+                                <option value="Family Ride" {% if ride.type == 'Family Ride' %}selected{% endif %}>Family Ride</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="price">Price (₱):</label>
+                            <input type="number" id="price" name="price" step="0.01" value="{{ ride.price }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="available_tickets">Available Tickets:</label>
+                            <input type="number" id="available_tickets" name="available_tickets" value="{{ ride.available_tickets }}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="total_tickets">Total Tickets:</label>
+                        <input type="number" id="total_tickets" name="total_tickets" value="{{ ride.total_tickets }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="schedule">Schedule:</label>
+                        <input type="text" id="schedule" name="schedule" value="{{ ride.schedule }}" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="age_limit">Age Limit:</label>
+                            <input type="text" id="age_limit" name="age_limit" value="{{ ride.age_limit }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="height_limit">Height Limit:</label>
+                            <input type="text" id="height_limit" name="height_limit" value="{{ ride.height_limit }}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Update Ride</button>
+                        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Carnival Ride Ticketing System. All Rights Reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

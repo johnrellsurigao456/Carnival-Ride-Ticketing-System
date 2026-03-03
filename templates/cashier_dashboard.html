@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Carnival Ticketing System</title>
+    <title>Cashier Dashboard - Carnival Ticketing</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="container">
         <!-- Header -->
         <header class="header">
-            <h1>🎡 Carnival Ride Ticketing System 🎢</h1>
-            <p class="subtitle">Welcome, {{ session.full_name }}! Ready for an adventure?</p>
+            <h1>💰 Cashier Dashboard 🎡</h1>
+            <p class="subtitle">Welcome, {{ session.full_name }}! Book tickets for customers</p>
         </header>
 
         <!-- Navigation -->
         <nav class="nav">
-            <a href="{{ url_for('home') }}" class="nav-link">Home</a>
-            <a href="{{ url_for('dashboard') }}" class="nav-link active">Dashboard</a>
-            <a href="{{ url_for('view_bookings') }}" class="nav-link">My Bookings</a>
-            <a href="{{ url_for('about') }}" class="nav-link">About Us</a>
+            <a href="{{ url_for('cashier_dashboard') }}" class="nav-link active">Book Tickets</a>
+            <a href="{{ url_for('cashier_bookings') }}" class="nav-link">My Bookings</a>
+            <a href="{{ url_for('scan_ticket') }}" class="nav-link">Scan Ticket</a>
+            <a href="{{ url_for('about') }}" class="nav-link">About</a>
             <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
             <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
         </nav>
@@ -38,17 +38,10 @@
         <!-- Statistics Cards -->
         <div class="stats-container">
             <div class="stat-card">
-                <div class="stat-icon">🎢</div>
+                <div class="stat-icon">💰</div>
                 <div class="stat-info">
-                    <h3>{{ total_rides }}</h3>
-                    <p>Total Rides</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">🎫</div>
-                <div class="stat-info">
-                    <h3>{{ total_tickets }}</h3>
-                    <p>Tickets Available</p>
+                    <h3>₱{{ "%.2f"|format(total_sales) }}</h3>
+                    <p>Total Sales</p>
                 </div>
             </div>
             <div class="stat-card">
@@ -78,11 +71,7 @@
                             <p><strong>👤 Age Limit:</strong> {{ ride.age_limit }}</p>
                             <p><strong>📏 Height:</strong> {{ ride.height_limit }}</p>
                         </div>
-                        {% if ride.available_tickets > 0 %}
-                            <a href="{{ url_for('book_ticket', ride_id=ride.id) }}" class="btn btn-primary">Book Now</a>
-                        {% else %}
-                            <button class="btn btn-disabled" disabled>Sold Out</button>
-                        {% endif %}
+                        <a href="{{ url_for('cashier_book', ride_id=ride.id) }}" class="btn btn-primary">Book for Customer</a>
                     </div>
                 </div>
                 {% endfor %}
@@ -107,11 +96,7 @@
                             <p><strong>👤 Age Limit:</strong> {{ ride.age_limit }}</p>
                             <p><strong>📏 Height:</strong> {{ ride.height_limit }}</p>
                         </div>
-                        {% if ride.available_tickets > 0 %}
-                            <a href="{{ url_for('book_ticket', ride_id=ride.id) }}" class="btn btn-primary">Book Now</a>
-                        {% else %}
-                            <button class="btn btn-disabled" disabled>Sold Out</button>
-                        {% endif %}
+                        <a href="{{ url_for('cashier_book', ride_id=ride.id) }}" class="btn btn-primary">Book for Customer</a>
                     </div>
                 </div>
                 {% endfor %}
